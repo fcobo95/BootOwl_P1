@@ -168,7 +168,7 @@ def execute_code(name):
     return Response(action)
 
 
-# Displays a nice heart-warming greeting to a user.
+# Displays a nice heart-warming greeting to a user. This is the main page.
 @app.route('/', methods=['GET'])
 def index():
     return Response(render_template('index.html'), status=200)
