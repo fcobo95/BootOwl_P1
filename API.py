@@ -93,8 +93,13 @@ def update(doc_id):
     new_name = in_args['new_name']
     result = ''
     try:
-        collection.update_one({'_id': ObjectId(doc_id)}, {'$set': {'name': new_name}}, upsert=False,
-                              bypass_document_validation=True)
+        collection.update_one(
+            {'_id': ObjectId(doc_id)},
+            {'$set': {
+                'name': new_name
+            }
+            }, upsert=False,
+            bypass_document_validation=True)
 
         result = {
             'name': new_name
@@ -118,7 +123,11 @@ def print_log():
         result = []
         for query in trick_list.find():
             result.append(
-                {'user': query['user'], 'name': query['name'], 'api_code': query['api_code'], 'date': query['date']})
+                {'user': query['user'],
+                 'name': query['name'],
+                 'api_code': query['api_code'],
+                 'date': query['date']
+                 })
             log = jsonify({'result': result})
     except Exception as exc:
         page_not_found(exc)
