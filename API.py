@@ -33,9 +33,24 @@ time_stamp = datetime.datetime.utcnow()
 
 
 # We use this method to handle 404 errors, in case the user enters a wrong input.
+@app.errorhandler(500)
+def internal_server_failure():
+    return render_template('500.html'), 500
+
+
+@app.errorhandler(405)
+def wrong_method():
+    return render_template('405.html'), 405
+
+
 @app.errorhandler(404)
-def page_not_found(error):
+def page_not_found():
     return render_template('404.html'), 404
+
+
+@app.errorhandler(400)
+def wrong_request():
+    return render_template('400.html'), 400
 
 
 # This method allows BootOwl to store a new ability, which he will be able to execute in another method.
@@ -83,7 +98,7 @@ def forget(name):
 
     results = {'user': user_id,
                'name': name}
-    return jsonify({'results': results}), 200
+    return Response(json.dumps(results), status=200, mimetype='application/json')
 
 
 # This method allows BootOwl to update an abilities name. This is an UPDATE in the data base.
@@ -108,9 +123,7 @@ def update(doc_id):
     except Exception as exc:
         page_not_found(exc)
 
-    updated = jsonify({'result': result})
-
-    return updated  # This let's BootOwl to print his current abilities.
+    return Response(json.dumps(result), status=200, mimetype='application/json')
 
 
 # This let's BootOwl to print his current abilities.
@@ -132,7 +145,7 @@ def print_log():
     except Exception as exc:
         page_not_found(exc)
 
-    return log
+    return Response(json.dumps(log), status=200, mimetype='application/json')
 
 
 # This method prints Boot Owl's current possible states.
@@ -149,23 +162,24 @@ def print_state():
     except Exception as exc:
         page_not_found(exc)
 
-    return state
+    return Response(state, status=200, mimetype='application/json')
 
 
 # This allows Boot Owl to execute code commands, couldn't manage to execute functions.
-@app.route('/execute-action/<name>', methods=['GET', 'POST'])
-def execute_code(name):
+@app.route('/execute-action/<doc_id>', methods=['GET', 'POST'])
+def execute_code(doc_id):
     action = None
     try:
-        for query in collection.find({'name': name}):
-            if name != query['name']:
-                page_not_found(Exception)
-            else:
+        for query in collection.find({'name': doc_id}):
+            if query['_id'] == ObjectId(doc_id):
                 action = exec(eval(query['api_code']))
+            else:
+                page_not_found(Exception)
+
     except Exception as exc:
         page_not_found(exc)
 
-    return Response(action)
+    return Response(action, status=200)
 
 
 # Displays a nice heart-warming greeting to a user. This is the main page.
