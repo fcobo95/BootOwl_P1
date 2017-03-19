@@ -129,7 +129,6 @@ def update(doc_id):
 # This let's BootOwl to print his current abilities.
 @app.route('/log/', methods=['GET'])
 def print_log():
-    log = ''
 
     try:
         trick_list = data_base.get_collection("boot_owl_activity_log")
@@ -141,28 +140,26 @@ def print_log():
                  'api_code': query['api_code'],
                  'date': query['date']
                  })
-            log = jsonify({'result': result})
+
     except Exception as exc:
         page_not_found(exc)
 
-    return Response(json.dumps(log), status=200, mimetype='application/json')
+    return Response(json.dumps(result), status=200, mimetype='application/json')
 
 
 # This method prints Boot Owl's current possible states.
 @app.route('/state/', methods=['GET'])
 def print_state():
-    state = ''
 
     try:
         state_lists = data_base.get_collection("boot_owl_activity_log")
         result = []
         for query in state_lists.find():
             result.append({'api_code': query['api_code'], 'name': query['name']})
-            state = jsonify({'result': result})
     except Exception as exc:
         page_not_found(exc)
 
-    return Response(state, status=200, mimetype='application/json')
+    return Response(json.dumps(result), status=200, mimetype='application/json')
 
 
 # This allows Boot Owl to execute code commands, couldn't manage to execute functions.
@@ -170,16 +167,14 @@ def print_state():
 def execute_code(doc_id):
     action = None
     try:
-        for query in collection.find({'name': doc_id}):
-            if query['_id'] == ObjectId(doc_id):
-                action = exec(eval(query['api_code']))
-            else:
-                page_not_found(Exception)
+        for query in collection.find({'_id': ObjectId(doc_id)}):
+                action = query['api_code']
+                exec(action)
 
     except Exception as exc:
         page_not_found(exc)
 
-    return Response(action, status=200)
+    return Response(json.dumps(action), status=200)
 
 
 # Displays a nice heart-warming greeting to a user. This is the main page.
