@@ -130,9 +130,11 @@ def update(doc_id):
 @app.route('/log/', methods=['GET'])
 def print_log():
 
+    result = []
+
     try:
         trick_list = data_base.get_collection("boot_owl_activity_log")
-        result = []
+
         for query in trick_list.find():
             result.append(
                 {'user': query['user'],
