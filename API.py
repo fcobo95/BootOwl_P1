@@ -131,7 +131,6 @@ def update(doc_id):
 def print_log():
 
     result = []
-
     try:
         trick_list = data_base.get_collection("boot_owl_activity_log")
 
