@@ -151,9 +151,9 @@ def print_log():
 @app.route('/state/', methods=['GET'])
 def print_state():
 
+    result = []
     try:
         state_lists = data_base.get_collection("boot_owl_activity_log")
-        result = []
         for query in state_lists.find():
             result.append({'api_code': query['api_code'], 'name': query['name']})
     except Exception as exc:
