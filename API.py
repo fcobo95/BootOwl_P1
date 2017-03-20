@@ -185,21 +185,11 @@ def execute_code(doc_id):
 def operations():
     in_args = request.args
 
-    operation_result = []
     param1 = in_args['num1']
     param2 = in_args['num2']
     param3 = in_args['operation']
 
     try:
-
-        if param1 or param2 is not in_args:
-            operation_result = [{
-                'num2': 'Please give this number a value.',
-                'This number can be:': {
-                    'Integer': 'Such as 1,2,3,4,5,6,7...-1,-2,-3,-4,-5,-6,-7...',
-                    'Decimal': 'Such as 1.2, 3.2, 14.45, -120.85985...'
-                }
-            }]
 
         if param3 == 'add':
             operation_result = int(param1) + int(param2)
@@ -226,7 +216,7 @@ def operations():
             ]
 
     except Exception as exception:
-        database_failure(exception)
+        return 'Something went wrong!' + str(exception)
 
     result = {
         'result': {
