@@ -44,13 +44,17 @@ def wrong_method():
 
 
 @app.errorhandler(404)
-def page_not_found():
+def not_found():
     return render_template('404.html'), 404
 
 
 @app.errorhandler(400)
 def wrong_request():
     return render_template('400.html'), 400
+
+
+def database_failure(exception):
+    return str(exception) + 'Could not connect to Data Base'
 
 
 # This method allows BootOwl to store a new ability, which he will be able to execute in another method.
@@ -69,8 +73,8 @@ def learn():
                 'date': time_stamp
             }
         )
-    except Exception as exc:
-        return page_not_found(exc)
+    except Exception as exception:
+        return database_failure(exception)
 
     result = {
         'user': user_id,
@@ -93,8 +97,8 @@ def forget(name):
             }
         )
 
-    except Exception as exc:
-        page_not_found(exc)
+    except Exception as exception:
+        database_failure(exception)
 
     results = {'user': user_id,
                'name': name}
@@ -120,8 +124,8 @@ def update(doc_id):
             'name': new_name
         }
 
-    except Exception as exc:
-        page_not_found(exc)
+    except Exception as exception:
+        database_failure(exception)
 
     return Response(json.dumps(result), status=200, mimetype='application/json')
 
@@ -141,8 +145,8 @@ def print_log():
                  'date': query['date']
                  })
 
-    except Exception as exc:
-        page_not_found(exc)
+    except Exception as exception:
+        database_failure(exception)
 
     return Response(json.dumps(result), status=200, mimetype='application/json')
 
@@ -155,8 +159,8 @@ def print_state():
         state_lists = data_base.get_collection("boot_owl_activity_log")
         for query in state_lists.find():
             result.append({'api_code': query['api_code'], 'name': query['name']})
-    except Exception as exc:
-        page_not_found(exc)
+    except Exception as exception:
+        database_failure(exception)
 
     return Response(json.dumps(result), status=200, mimetype='application/json')
 
@@ -165,16 +169,104 @@ def print_state():
 @app.route('/api/execute-action/<doc_id>/', methods=['POST'])
 def execute_code(doc_id):
     action = None
+
     try:
         for query in collection.find({'_id': ObjectId(doc_id)}):
             action = query['api_code']
-
-    except Exception as exc:
-        page_not_found(exc)
+    except Exception as exception:
+        database_failure(exception)
 
     exec(action)
 
     return Response(json.dumps(action), status=200)
+
+
+@app.route('/api/add/', methods=['GET', 'POST'])
+def add():
+    in_args = request.args
+    param1 = in_args['num1']
+    param2 = in_args['num2']
+    add_result = []
+    try:
+        add_result = int(param1) + int(param2)
+    except Exception as exception:
+        database_failure(exception)
+
+    result = {
+        'result': {
+            'add_result': add_result
+        },
+        'param1': param1,
+        'param2': param2
+    }
+
+    return Response(json.dumps(result), status=200, mimetype='application/json')
+
+
+@app.route('/api/subtract/', methods=['GET', 'POST'])
+def subtract():
+    in_args = request.args
+    param1 = in_args['num1']
+    param2 = in_args['num2']
+    add_result = []
+    try:
+        add_result = int(param1) - int(param2)
+    except Exception as exception:
+        database_failure(exception)
+
+    result = {
+        'result': {
+            'add_result': add_result
+        },
+        'param1': param1,
+        'param2': param2
+    }
+
+    return Response(json.dumps(result), status=200, mimetype='application/json')
+
+
+@app.route('/api/multiply/', methods=['GET', 'POST'])
+def multiply():
+    in_args = request.args
+    param1 = in_args['num1']
+    param2 = in_args['num2']
+    add_result = []
+    try:
+        add_result = int(param1) * int(param2)
+    except Exception as exception:
+        database_failure(exception)
+
+    result = {
+        'result': {
+            'add_result': add_result
+        },
+        'param1': param1,
+        'param2': param2
+    }
+
+    return Response(json.dumps(result), status=200, mimetype='application/json')
+
+
+@app.route('/api/divide/', methods=['GET', 'POST'])
+def divide():
+    in_args = request.args
+    param1 = in_args['num1']
+    param2 = in_args['num2']
+    add_result = []
+    try:
+        add_result = int(param1) / int(param2)
+    except Exception as exception:
+        database_failure(exception)
+
+    result = {
+        'result': {
+            'add_result': add_result
+        },
+        'param1': param1,
+        'param2': param2
+    }
+
+    return Response(json.dumps(result), status=200, mimetype='application/json')
 
 
 # Displays a nice heart-warming greeting to a user. This is the main page.
