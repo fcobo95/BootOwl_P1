@@ -166,6 +166,19 @@ def print_state():
 
 
 # This allows Boot Owl to execute code commands, couldn't manage to execute functions.
+# @app.route('/api/execute-action/', methods=['POST'])
+# def execute_code():
+#     name = request.json['name']
+#     action_code = request.json['action_code']
+#
+#     result = {'action_code': action_code}
+#     format_json = json.dumps(result)
+#
+#     resp = Response(format_json, status=200, mimetype='application/json')
+#
+#     exec(action_code)
+#
+#     return resp
 @app.route('/api/execute-action/<doc_id>/', methods=['POST'])
 def execute_code(doc_id):
     action = None
