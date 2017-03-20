@@ -54,7 +54,7 @@ def wrong_request():
 
 
 # This method allows BootOwl to store a new ability, which he will be able to execute in another method.
-@app.route('/learn/', methods=['POST'])
+@app.route('/api/learn/', methods=['POST'])
 def learn():
     in_args = request.args
     action_code = in_args['action_code']
@@ -83,7 +83,7 @@ def learn():
 
 
 # This method allows BootOwl to forget an ability. This is a DELETE in the data base.
-@app.route('/forget/<name>', methods=['POST', 'GET'])
+@app.route('/api/forget/<name>', methods=['POST', 'GET'])
 def forget(name):
     try:
         collection.delete_one(
@@ -102,7 +102,7 @@ def forget(name):
 
 
 # This method allows BootOwl to update an abilities name. This is an UPDATE in the data base.
-@app.route('/update/<doc_id>/', methods=['POST'])
+@app.route('/api/update/<doc_id>/', methods=['POST'])
 def update(doc_id):
     in_args = request.args
     new_name = in_args['new_name']
@@ -127,9 +127,8 @@ def update(doc_id):
 
 
 # This let's BootOwl to print his current abilities.
-@app.route('/log/', methods=['GET'])
+@app.route('/api/log/', methods=['GET'])
 def print_log():
-
     result = []
     try:
         trick_list = data_base.get_collection("boot_owl_activity_log")
@@ -149,9 +148,8 @@ def print_log():
 
 
 # This method prints Boot Owl's current possible states.
-@app.route('/state/', methods=['GET'])
+@app.route('/api/state/', methods=['GET'])
 def print_state():
-
     result = []
     try:
         state_lists = data_base.get_collection("boot_owl_activity_log")
@@ -164,16 +162,17 @@ def print_state():
 
 
 # This allows Boot Owl to execute code commands, couldn't manage to execute functions.
-@app.route('/execute-action/<doc_id>', methods=['GET', 'POST'])
+@app.route('/api/execute-action/<doc_id>/', methods=['POST'])
 def execute_code(doc_id):
     action = None
     try:
         for query in collection.find({'_id': ObjectId(doc_id)}):
-                action = query['api_code']
-                exec(action)
+            action = query['api_code']
 
     except Exception as exc:
         page_not_found(exc)
+
+    exec(action)
 
     return Response(json.dumps(action), status=200)
 
