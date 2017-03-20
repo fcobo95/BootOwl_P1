@@ -44,7 +44,7 @@ def wrong_method():
 
 
 @app.errorhandler(404)
-def not_found():
+def page_not_found():
     return render_template('404.html'), 404
 
 
@@ -181,89 +181,38 @@ def execute_code(doc_id):
     return Response(json.dumps(action), status=200)
 
 
-@app.route('/api/add/', methods=['GET', 'POST'])
-def add():
-    in_args = request.args
-    param1 = in_args['num1']
-    param2 = in_args['num2']
-    add_result = []
-    try:
-        add_result = int(param1) + int(param2)
-    except Exception as exception:
-        database_failure(exception)
-
-    result = {
-        'result': {
-            'add_result': add_result
-        },
-        'param1': param1,
-        'param2': param2
-    }
-
-    return Response(json.dumps(result), status=200, mimetype='application/json')
-
-
-@app.route('/api/subtract/', methods=['GET', 'POST'])
-def subtract():
-    in_args = request.args
-    param1 = in_args['num1']
-    param2 = in_args['num2']
-    add_result = []
-    try:
-        add_result = int(param1) - int(param2)
-    except Exception as exception:
-        database_failure(exception)
-
-    result = {
-        'result': {
-            'add_result': add_result
-        },
-        'param1': param1,
-        'param2': param2
-    }
-
-    return Response(json.dumps(result), status=200, mimetype='application/json')
-
-
-@app.route('/api/multiply/', methods=['GET', 'POST'])
+@app.route('/api/math/', methods=['GET', 'POST'])
 def multiply():
     in_args = request.args
+
     param1 = in_args['num1']
     param2 = in_args['num2']
-    add_result = []
+    param3 = in_args['operation']
+
+    operation_result = []
+
     try:
-        add_result = int(param1) * int(param2)
+        if param3 == 'add':
+            operation_result = int(param1) + int(param2)
+
+        elif param3 == 'subtract':
+            operation_result = int(param1) - int(param2)
+
+        elif param3 == 'multiply':
+            operation_result = int(param1) * int(param2)
+
+        elif param3 == 'divide':
+            operation_result = int(param1) / int(param2)
+
     except Exception as exception:
         database_failure(exception)
 
     result = {
         'result': {
-            'add_result': add_result
+            'add_result': operation_result
         },
-        'param1': param1,
-        'param2': param2
-    }
-
-    return Response(json.dumps(result), status=200, mimetype='application/json')
-
-
-@app.route('/api/divide/', methods=['GET', 'POST'])
-def divide():
-    in_args = request.args
-    param1 = in_args['num1']
-    param2 = in_args['num2']
-    add_result = []
-    try:
-        add_result = int(param1) / int(param2)
-    except Exception as exception:
-        database_failure(exception)
-
-    result = {
-        'result': {
-            'add_result': add_result
-        },
-        'param1': param1,
-        'param2': param2
+        'num1': param1,
+        'num2': param2
     }
 
     return Response(json.dumps(result), status=200, mimetype='application/json')
