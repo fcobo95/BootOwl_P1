@@ -182,7 +182,7 @@ def execute_code(doc_id):
 
 
 @app.route('/api/math/', methods=['GET', 'POST'])
-def multiply():
+def operations():
     in_args = request.args
 
     param1 = in_args['num1']
