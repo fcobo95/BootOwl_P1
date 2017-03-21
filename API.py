@@ -261,7 +261,7 @@ I gave this project my best effort, but I was unable to make my API consume othe
 I will keep working on it, even if the project is done, but my practice and skills aren't. I will learn how to
 do this, but I will require some more study time and efforts. I do acknowledge the lack of functionality, but I
 added a new route --> ('/api/math/') which basically can add, subtract, multiply and divide two numbers. It receives
-num1 and num2 as the parameters for the numbers and a third parameter called operation which has the for basic math
+num1 and num2 as the parameters for the numbers and a third parameter called operation which has the four basic math
 operation options. The user can input two numbers and tell the API what he wants to do with them.
 
 -Erick Cobo
